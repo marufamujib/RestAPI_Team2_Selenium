@@ -18,6 +18,46 @@ public class TestTweetAPIClient {
     public void setUpTweetAPI(){
         this.tweetAPIClient=new TweetAPIClient();
     }
+    @Test(enabled = false)
+    public void testUserCanTweetSuccessfully() {
+        // 1. User send a tweet
+        String tweet = "Tweet " + UUID.randomUUID().toString();
+        ValidatableResponse response = this.tweetAPIClient.createTweet(tweet);
+        // Verify that the tweet was successfully send
+        response.statusCode(200);
+        String actualTweet = response.extract().body().path("text");
+        Assert.assertEquals(tweet, actualTweet);
+    }
+
+    // Write an API test where user can not twee the same tweet twice in a row
+    @Test(enabled = false)
+    public void testUserCanNotTweetTheSameTweetTwiceInARow() {
+        // 1. User send a tweet
+        String tweet = "Tweet " + UUID.randomUUID().toString();
+        ValidatableResponse response = this.tweetAPIClient.createTweet(tweet);
+        // 2. Verify that the tweet was successfully send
+        response.statusCode(200);
+        String actualTweet = response.extract().body().path("text");
+        Assert.assertEquals(tweet, actualTweet);
+        // 3. User sends the same tweet again
+        response = this.tweetAPIClient.createTweet(tweet);
+        // 4. Verify that the tweet was unsuccessfull
+        response.statusCode(403);
+        String expectedMessage = "Status is a duplicate.";
+        String actualMessage = response.extract().body().path("errors[0].message");
+        Assert.assertEquals(actualMessage, expectedMessage);
+
+
+    }
+
+    @Test(enabled = false)
+    public void testDeleteTweet() {
+//        String tweet="Tweet "+ UUID.randomUUID().toString();
+//        ValidatableResponse response=this.tweetAPIClient.createTweet(tweet).assertThat()
+//                .body("id",equals());
+        ValidatableResponse response = this.tweetAPIClient.deleteTweet(1273434027597484038L);
+
+    }
 
 
 
